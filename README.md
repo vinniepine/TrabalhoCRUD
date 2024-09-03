@@ -1,7 +1,13 @@
 Instituto Federal de Educação, Ciência e Tecnologia de Rondônia - IFRO
+
 C.S.T. em Análise e Desenvolvimento de Sistemas
+
 Disciplinas de Banco de Dados II e Programação Orientada a Objetos
+
 Professor Elias de Abreu Domingos da Silva
+
+
+Acadêmico Vinicius de Oliveira Pinheiro
 
 Trabalho de Avaliação - CRUD em C# de uma das tabelas (dispositivo) do BD feito em sala.
 Conteúdo:
