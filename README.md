@@ -9,5 +9,5 @@ Trabalho de Avaliação - CRUD em C# de uma das tabelas (dispositivo) do BD feit
 
 Conteúdo:
 > Banco de Dados modelo físico no formato txt;
->> Banco de Dados modelo físico no formato sql;
->> Projeto do trabalho em C# no Windows Forms.
+> Banco de Dados modelo físico no formato sql;
+> Projeto do trabalho em C# no Windows Forms.
