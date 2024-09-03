@@ -1,0 +1,283 @@
+CREATE DATABASE sales_system;
+USE sales_system;
+CREATE TABLE funcionario (
+	id INT PRIMARY KEY AUTO_INCREMENT,
+    nome VARCHAR(50),
+    cpf VARCHAR(11)
+);
+
+CREATE TABLE caixa (
+	id INT PRIMARY KEY AUTO_INCREMENT,
+    saldo_inicial DOUBLE,
+    total_entrada DOUBLE,
+    total_saida DOUBLE,
+    status_caixa BOOL,
+    fk_id_funcionario INTEGER NOT NULL,
+    FOREIGN KEY (fk_id_funcionario) REFERENCES funcionario(id)
+);
+
+CREATE TABLE despesa (
+	id INT PRIMARY KEY AUTO_INCREMENT,
+	valor DOUBLE,
+    vencimento DATETIME,
+    data_pagamento DATETIME,
+    fk_id_fornecedor INTEGER NOT NULL DEFAULT 1, FOREIGN KEY (fk_id_fornecedor) REFERENCES fornecedor(id),
+    fk_id_caixa INTEGER NOT NULL, FOREIGN KEY (fk_id_caixa) REFERENCES caixa(id) 
+);
+
+CREATE TABLE servicos (
+	id INT PRIMARY KEY AUTO_INCREMENT,
+	valor DOUBLE,
+    descricao VARCHAR(255),
+    tempo TIME
+);
+
+CREATE TABLE cliente (
+	id INT PRIMARY KEY AUTO_INCREMENT,
+    nome VARCHAR(50) NOT NULL,
+    CPF VARCHAR(11),
+	email VARCHAR(40),
+    telefone VARCHAR(14),
+    data_nascimento DATE
+);
+
+CREATE TABLE venda (
+	id INT PRIMARY KEY AUTO_INCREMENT,
+    data_venda DATE,
+    hora_venda TIME,
+    valor_total DOUBLE,
+    desconto DOUBLE,
+    valor_final DOUBLE,
+    forma_pagamento ENUM("À VISTA", "A PRAZO"),
+    fk_id_cliente INTEGER, FOREIGN KEY (fk_id_cliente) REFERENCES cliente(id)    
+);
+
+
+CREATE TABLE servicos_venda (
+	id INT PRIMARY KEY AUTO_INCREMENT,
+    quantidade INTEGER,
+    valor_unitario DOUBLE,
+    fk_id_servicos INTEGER NOT NULL, FOREIGN KEY (fk_id_servicos) REFERENCES servicos(id),
+    fk_id_venda INTEGER NOT NULL, FOREIGN KEY (fk_id_venda) REFERENCES venda(id) ON DELETE CASCADE
+);
+
+
+CREATE TABLE recebimento (
+	id INT PRIMARY KEY AUTO_INCREMENT,
+    valor DOUBLE,
+    vencimento DATETIME,
+    data_pagamento DATETIME,
+    status_recebimento BOOL,
+    fk_id_venda INTEGER, FOREIGN KEY (fk_id_venda) REFERENCES venda(id),
+    fk_id_caixa INTEGER NOT NULL, FOREIGN KEY (fk_id_caixa) REFERENCES caixa(id)
+);
+
+
+CREATE TABLE dispositivo (
+	id INT PRIMARY KEY AUTO_INCREMENT,
+	alíquota DOUBLE,
+	descricao VARCHAR(255),
+	status_dispositivo BOOL
+);
+
+CREATE TABLE encargo (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    valor DOUBLE,
+    descricao VARCHAR(255),
+    fk_id_recebimento INTEGER NOT NULL,
+    FOREIGN KEY (fk_id_recebimento)
+        REFERENCES recebimento (id)
+        ON DELETE CASCADE,
+    fk_id_dispositivo INTEGER NOT NULL,
+    FOREIGN KEY (fk_id_dispositivo)
+        REFERENCES dispositivo (id) ON DELETE CASCADE;
+);
+-- Tabela pedida pelo professor na aula do dia 13-08-2024
+CREATE TABLE fornecedor (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    razao_social VARCHAR(50) NOT NULL,
+    nome VARCHAR(50),
+    cnpj VARCHAR(14),
+    atividade_economica VARCHAR(70),
+    fornecedor_status BOOL,
+    telefone VARCHAR(15),
+    email VARCHAR(30)
+);
+
+
+
+-- Professor pediu alteração na tabela despesa;
+-- Adicionando a chave estrangeira e a sua restrição (constraint);
+SELECT valor_total, data_venda FROM venda ORDER BY id DESC;
+SELECT * FROM servicos WHERE descricao LIKE 'A%';
+
+INSERT INTO venda (data_venda, valor_total, desconto, valor_final, forma_pagamento) VALUES ('2024-07-22', 600, 0, 600, 1);
+INSERT INTO venda (data_venda, valor_total, desconto, valor_final, forma_pagamento) VALUES ('2024-07-22', 400, 0, 400, 2);
+INSERT INTO servicos (valor, descricao, tempo) VALUES (100, 'leitura de cartas', '01:30:00'), (200, 'leitura de mãos', '02:00:00'), (300, 'leitura da borra', '01:00:00'), 
+(400, 'mapa natal', '02:00:00'), (500, 'leitura das runas', '01:00:00'), (600, 'limpeza energética com cristais', '01:00:00'), (700, 'banho de ervas em ofurô', '02:00:00');
+
+SELECT * FROM servicos;
+SELECT * FROM venda;
+INSERT INTO servicos_venda (quantidade, valor_unitario, fk_id_servicos, fk_id_venda) VALUES(1, 300, 1, 1);
+INSERT INTO servicos_venda (quantidade, valor_unitario, fk_id_servicos, fk_id_venda) VALUES(3, 100, 1, 1);
+DELETE FROM venda WHERE id = 1;
+SELECT * FROM servicos_venda;
+
+
+INSERT INTO funcionario (nome, cpf) VALUES ("Sandra", "11111111111"), ("Carla", "22222222222");
+INSERT INTO caixa (saldo_inicial, total_entrada, total_saida, status_caixa, fk_id_funcionario) VALUES (200, 600, 30, true, 1), (300, 800, 25, true, 2);
+INSERT INTO venda (data_venda, hora_venda, valor_total, desconto, valor_final, forma_pagamento) VALUES ('2024-07-30', '09:00:00', 300, 0, 300, 1);
+INSERT INTO venda (data_venda, hora_venda, valor_total, desconto, valor_final, forma_pagamento) VALUES ('2024-07-30', '10:00:00', 300, 0, 300, 2); 
+INSERT INTO venda (data_venda, hora_venda, valor_total, desconto, valor_final, forma_pagamento) VALUES ('2024-07-30', '11:00:00', 300, 0, 300, 2);
+INSERT INTO venda (data_venda, hora_venda, valor_total, desconto, valor_final, forma_pagamento) VALUES ('2024-07-30', '09:00:00', 200, 25, 175, 1);
+INSERT INTO venda (data_venda, hora_venda, valor_total, desconto, valor_final, forma_pagamento) VALUES ('2024-07-30', '09:00:00', 500, 25, 175, 1);
+
+select * from recebimento;
+
+SELECT*FROM CAIXA;
+
+INSERT INTO recebimento (valor, vencimento, data_pagamento, status_recebimento, fk_id_venda, fk_id_caixa) VALUES (100, '2024-08-30', '2024-07-30', true, 2, 1);
+-- UPDATE RECEBIMENTO SET fk_id_venda = 2 WHERE ID = 2; Eu tinha esquecido de fazer isso, mas agora deixei no próprio código original.
+INSERT INTO recebimento (valor, vencimento, data_pagamento, status_recebimento, fk_id_venda, fk_id_caixa) VALUES (100, '2024-8-30', '2024-07-30', true, 2, 1);
+
+
+INSERT INTO dispositivo (alíquota, descricao, status_dispositivo) VALUES (0.5, 'getNet', true);
+INSERT INTO encargo (valor, descricao, fk_id_recebimento, fk_id_dispositivo) VALUES (0.5, 'pix', 1, 1);
+INSERT INTO encargo (valor, descricao, fk_id_recebimento, fk_id_dispositivo) VALUES (0.5, 'pix', 2, 1);
+INSERT INTO encargo (valor, descricao, fk_id_recebimento, fk_id_dispositivo) VALUES (0.5, 'pix', 3, 1);
+SELECT * FROM ENCARGO;
+
+INSERT INTO cliente (nome, cpf, email, telefone, data_nascimento) VALUES ("Cassandra", "33333333333", 'cassandra@mail.com', '11988883333', '1996-08-01');
+INSERT INTO cliente (nome, cpf, email, telefone, data_nascimento) VALUES ("Circe", "44444444444", 'circe@mail.com', '11988884444', '1998-10-31');
+
+UPDATE venda SET hora_venda = '08:00:00' WHERE id =2;
+UPDATE venda SET fk_id_cliente = 1 WHERE id = 3;
+SELECT * FROM venda;
+SELECT v.id as ID, v.data_venda, v.fk_id_cliente FROM venda AS v INNER JOIN cliente AS b ON b.id = v.fk_id_cliente;
+
+SELECT * FROM CAIXA;
+
+SELECT * FROM servicos ORDER BY descricao;
+SELECT AVG(valor) FROM servicos;
+
+SELECT id FROM servicos WHERE valor > 100 OR tempo < '00:00:30';
+SELECT id FROM servicos WHERE valor > 100 AND tempo < '00:00:30';
+SELECT * FROM servicos WHERE descricao LIKE  'B%';
+
+SELECT nome, CPF FROM cliente;
+
+-- Seleção usando o Is Not Null;
+SELECT 
+    *
+FROM
+    cliente
+WHERE
+    id IS NOT NULL;
+
+-- Uso do Inner Join
+SELECT * FROM venda 
+	INNER JOIN cliente AS c 
+	ON c.id = venda.fk_id_cliente
+	WHERE fk_id_cliente IS NOT NULL;
+
+-- Uso do Right Join
+SELECT * FROM venda AS v
+	RIGHT JOIN cliente AS c 
+    ON c.id = v.fk_id_cliente;
+    
+-- Uso do Union
+SELECT nome AS n, cpf FROM cliente 
+	UNION
+    SELECT nome, cpf FROM funcionario;
+    
+-- Consultas Alinhadas (Select dentro de Select)
+SELECT * FROM servicos 
+	WHERE valor = (SELECT MAX(valor) FROM servicos);
+
+-- Selecione todos os serviços que possuam valores maiores que a média dos valores vendidos;
+SELECT id, valor_final FROM venda WHERE valor_final > (SELECT AVG(valor) FROM servicos);
+
+-- Selecione todos os serviços que possuem valores maiores que a média dos valores dos serviços/
+SELECT descricao FROM servicos WHERE valor > (SELECT AVG(valor) FROM servicos);
+
+-- Faça uma consulta em SQL que retorne todos os recebimentos feitos por um usuário.
+
+SELECT * FROM recebimento AS r 
+	INNER JOIN caixa AS c
+    ON r.fk_id_caixa = c.id
+    INNER JOIN funcionario AS f
+    ON c.fk_id_funcionario = f.id;
+  
+-- De recebimentos já realizados por esses funcionários;
+SELECT * FROM recebimento AS r 
+	INNER JOIN caixa AS c
+    ON r.fk_id_caixa = c.id
+    INNER JOIN funcionario AS f
+    ON c.fk_id_funcionario = f.id
+    WHERE r.status_recebimento = true;
+
+
+-- Sugestão de consulta: pegar todos os recebimentos de todo cliente.
+-- Estudar Inner Join
+-- HAVERÃO DUAS QUESTÕES DA PROVA EXIGINDO O USO DE "INNER JOIN";
+
+-- AULA DO DIA 13/08/2024
+SELECT sv.id, sv.fk_id_venda, s.descricao FROM servicos_venda AS sv
+INNER JOIN servicos AS s
+ON sv.fk_id_servicos = s.id;
+
+SELECT * FROM despesa;
+SELECT * FROM servicos_venda;
+SELECT * FROM servicos;
+SELECT * FROM venda;
+INSERT INTO servicos_venda (quantidade, valor_unitario, fk_id_servicos, fk_id_venda) 
+VALUES (1, 200, 2, 2), (1, 200, 2, 2), (1, 300, 3, 3);
+INSERT INTO servicos_venda (quantidade, valor_unitario, fk_id_servicos, fk_id_venda) 
+VALUES (5, 50, 1, 4);
+DELETE FROM servicos_venda WHERE ID = 5 OR ID = 6;
+DESC despesa;
+DESC fornecedor;
+SELECT*FROM caixa;
+INSERT INTO fornecedor(razao_social, nome, cnpj, atividade_economica, fornecedor_status, telefone, email) VALUES ('PIZZARIA BIG BANG', 'Big Bang Pizzas', '10336145000111', 'BAR E RESTAURANTE', TRUE, 69999875110, 'bigbang.financeiro@gmail.com');
+INSERT INTO fornecedor(razao_social, nome, cnpj, atividade_economica, fornecedor_status, telefone, email) VALUES ('F.R. SANCHES', 'Mystic Shop', '77777777000777', 'VAREJO', TRUE, 47985203644, 'mysticshop@gmail.com');
+INSERT INTO fornecedor(razao_social, nome, cnpj, atividade_economica, fornecedor_status, telefone, email) VALUES ('EGITO ATACADOS', 'Horus Eye', '11111111000111', 'VAREJO', TRUE, 68999555555, 'horuseye@gmail.com');
+INSERT INTO despesa(valor, data_pagamento, fk_id_Caixa, fk_id_fornecedor) VALUES (75, '2024-08-12', 1, 1);
+
+-- INNER JOIN com todos os dados da despesa e o fornecedor;
+SELECT * FROM despesa AS d
+INNER JOIN fornecedor AS f
+ON d.fk_id_fornecedor = f.id;
+DESC CAIXA;
+
+-- Todos os dados do caixa e nome e cpf do funcionário responsável -- 
+SELECT c.id, c.saldo_inicial, c.total_entrada, c.total_saida, c.status_caixa, c.fk_id_funcionario, f.nome, f.cpf 
+FROM caixa AS c 
+INNER JOIN funcionario AS f
+ON c.fk_id_funcionario = f.id;
+
+-- Todos os serviços que constam em mais de duas vendas --
+/*SELECT s.descricao, COUNT(sv.id) AS vendas_contagem
+FROM servicos AS s
+JOIN servicos_venda AS sv 
+ON s.id = sv.fk_id_servicos
+GROUP BY s.id, s.descricao
+HAVING COUNT(sv.id) > 1;
+*/
+
+-- Resolução do professor
+-- Em um 'select alinhado', sempre resolvemos primeiro o select interno, em
+SELECT * FROM servicos AS s
+WHERE (SELECT COUNT(sv.id) FROM servicos_venda AS sv WHERE fk_id_servicos = s.id) > 2;
+
+-- Retornar todas as vendas que tem mais de uma parcela --
+SELECT v.id, v.valor_total FROM venda AS v WHERE 
+(SELECT COUNT(r.fk_id_venda) FROM recebimento AS r WHERE r.fk_id_venda = v.id) > 1;
+
+SELECT fk_id_venda, SUM(valor)
+FROM recebimentos
+GROUP BY fk_id_venda
+HAVING COUNT(id) > 1
+    AND fk_id_venda IS NOT NULL;
+
+-- Para buscar clientes que sejam da cidade JI-PARANÁ --
+SELECT COUNT(id_cliente) FROM clientes GROUP BY cidade HAVING nomeCid = 'Ji-Paraná';
