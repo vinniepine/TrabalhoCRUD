@@ -6,7 +6,8 @@ Professor Elias de Abreu Domingos da Silva
 Acadêmico Vinicius de Oliveira Pinheiro
 
 Trabalho de Avaliação - CRUD em C# de uma das tabelas (dispositivo) do BD feito em sala.
+
 Conteúdo:
->> Banco de Dados modelo físico no formato txt;
+> Banco de Dados modelo físico no formato txt;
 >> Banco de Dados modelo físico no formato sql;
 >> Projeto do trabalho em C# no Windows Forms.
