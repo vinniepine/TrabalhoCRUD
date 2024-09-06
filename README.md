@@ -8,5 +8,5 @@ Acadêmico Vinicius de Oliveira Pinheiro
 Trabalho de Avaliação - CRUD em C# de uma das tabelas (dispositivo) do BD feito em sala.<br>
 
 Conteúdo:<br>
-> Banco de Dados modelo físico no formato sql;<br>
-> Projeto do trabalho em C# no Windows Forms.
+> Banco de Dados modelo físico no formato .sql;<br>
+> Projeto de CRUD em C# no Windows Forms.
